@@ -1,0 +1,12 @@
+.Header {
+  height: 10vh;
+  background-color: #dddbde;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-gap: 10px;
+
+  .Button {
+    width: 60px;
+  }
+}
