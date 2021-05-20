@@ -1,57 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './List.scss'
 import { List } from 'antd'
+import { NotesContext } from '../../NotesContext'
+
 
 const ListItem: React.FC = () => {
 
-  const data = [
-    {
-      title: 'Title 1',
-      content: 'Some text 1'
-    },
-    {
-      title: 'Title 2',
-      content: 'Some text 2'
-    },
-    {
-      title: 'Title 3',
-      content: 'Some text 3'
-    },
-    {
-      title: 'Title 4',
-      content: 'Some text 4'
-    },
-    {
-      title: 'Title 5',
-      content: 'Some text 5'
-    },
-    {
-      title: 'Title 6',
-      content: 'Some text 6'
-    },
-    {
-      title: 'Title 7',
-      content: 'Some text 7'
-    },
-    {
-      title: 'Title 8',
-      content: 'Some text 8'
-    },
-    {
-      title: 'Title 9',
-      content: 'Some text 9'
-    },
-    {
-      title: 'Title 10',
-      content: 'Some text 10'
-    }
-  ]
+  const notes = useContext(NotesContext)
 
   return (
     <List
       className="List"
       itemLayout="horizontal"
-      dataSource={data}
+      dataSource={notes}
       renderItem={item => (
         <List.Item className="ListItem">
           <List.Item.Meta

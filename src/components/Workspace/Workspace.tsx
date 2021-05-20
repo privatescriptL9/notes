@@ -1,8 +1,14 @@
 import React from 'react'
 import './Workspace.scss'
 
-const Workspace: React.FC = () => (
-  <div className="Workspace">
+interface workspaceProps {
+  siderStatus: boolean
+}
+
+const Workspace: React.FC<workspaceProps> = ({
+  siderStatus
+}) => (
+  <div style={{width: siderStatus ? '75%' : '100%'}} className="Workspace">
     
   </div>
 )

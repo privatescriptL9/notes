@@ -3,8 +3,14 @@ import Sider from 'antd/lib/layout/Sider'
 import './Sidebar.scss'
 import List from '../List/List'
 
-const Sidebar: React.FC = () => (
-  <Sider width="25%" className="Sidebar">
+interface siderProps {
+  siderStatus: boolean
+}
+
+const Sidebar: React.FC<siderProps> = ({
+  siderStatus
+}) => (
+  <Sider width={siderStatus ? '25%' : '0%'} className="Sidebar">
     <List />
   </Sider>
 )
