@@ -12,6 +12,7 @@ import { INote } from './db/INote'
 const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
   const [notes, setNotes] = useState<Array<INote>>([])
+  const [order, setOrder] = useState<number>(1)
 
   useEffect(() => {
     NotesDB.getInstance().get().then(result => {
@@ -24,11 +25,13 @@ const App: React.FC = () => {
   }
 
   const addNoteHandler = () => {
-    NotesDB.getInstance().add({title: 'Note', content: 'some content'})
+    NotesDB.getInstance().add({title: `Note ${order}`, content: `some content ${order}`})
+    setOrder(order + 1)
   }
 
   const deleteNoteHandler = () => {
     NotesDB.getInstance().delete()
+    setOrder(1)
   }
 
   return (

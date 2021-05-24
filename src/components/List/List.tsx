@@ -18,7 +18,7 @@ const ListItem: React.FC = () => {
       renderItem={item => (
         <List.Item className="ListItem">
           <List.Item.Meta
-            title={<h2>{item.title}</h2>}
+            title={<span>{item.title}</span>}
             description={item.content}
           />
         </List.Item>
