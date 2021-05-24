@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import classes from './List.module.scss'
+import './List.scss'
 import { List } from 'antd'
 import { NotesContext } from '../../NotesContext'
 
@@ -16,7 +16,7 @@ const ListItem: React.FC = () => {
       itemLayout="horizontal"
       dataSource={notes}
       renderItem={item => (
-        <List.Item className="List">
+        <List.Item className="ListItem">
           <List.Item.Meta
             title={<h2>{item.title}</h2>}
             description={item.content}
