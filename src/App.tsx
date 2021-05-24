@@ -1,31 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.scss'
 import { Layout } from 'antd'
 import 'antd/dist/antd.css'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sider/Sidebar'
 import Workspace from './components/Workspace/Workspace'
-import { NotesDB } from './database/NotesDB'
-import { Note } from './database/note/Note'
+import { NotesDB } from './db/NotesDB'
 import { NotesContext } from './NotesContext'
+import { INote } from './db/INote'
 
 const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
+  const [notes, setNotes] = useState<Array<INote>>([])
+
+  useEffect(() => {
+    NotesDB.getInstance().get().then(result => {
+      setNotes(result)
+    })
+  })
 
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
   }
 
   const addNoteHandler = () => {
-    NotesDB.getInstance().notes.put(
-      new Note('Новая заметка', 'some content ...')
-    )
+    NotesDB.getInstance().add({title: 'Note', content: 'some content'})
+  }
+
+  const deleteNoteHandler = () => {
+    NotesDB.getInstance().delete()
   }
 
   return (
-    <NotesContext.Provider value={Note.getNotes()}>
+    <NotesContext.Provider value={notes}>
       <Layout className="App">
-        <Header addNoteHandler={addNoteHandler} siderHandler={siderHandler} />
+        <Header deleteNoteHandler={deleteNoteHandler} addNoteHandler={addNoteHandler} siderHandler={siderHandler} />
         <div className="wrapper">
           <Sidebar siderStatus={siderStatus} />
           <Workspace siderStatus={siderStatus} />
