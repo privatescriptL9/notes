@@ -43,11 +43,11 @@ const App: React.FC = () => {
   }
 
   const addNoteHandler = () => {
-    const title = prompt('Введите название заметки')
+    const title = prompt('Введите название заметки')?.trim()
     const content = prompt('Введите начальный контент')
 
     NotesDB.getInstance().add({
-      title: `${title && title === '' ? title : 'Новая заметка'}`,
+      title: `${title ? title : 'Новая заметка'}`,
       content: `${content}`,
       isActive: false
     })
