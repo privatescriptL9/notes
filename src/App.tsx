@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
-import { Layout, Modal, Button, Space } from 'antd'
+import { Layout, Modal } from 'antd'
 import 'antd/dist/antd.css'
 import {} from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
