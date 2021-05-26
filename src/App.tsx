@@ -10,11 +10,13 @@ import Workspace from './components/Workspace/Workspace'
 import { NotesDB } from './db/NotesDB'
 import { AddClass, NotesContext } from './NotesContext'
 import { INote } from './db/INote'
+import { ContentContext } from './ContentContext'
 
 const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
   const [notes, setNotes] = useState<Array<INote>>([])
   const [content, setContent] = useState<any>('')
+  const [disabled, setDisabled] = useState(true)
 
   useEffect(() => {
     NotesDB.getInstance()
@@ -31,6 +33,7 @@ const App: React.FC = () => {
         keys.forEach(key => {
           NotesDB.getInstance().update(+key, { isActive: false })
           setContent('')
+          setDisabled(true)
         })
       }
     })
@@ -46,12 +49,12 @@ const App: React.FC = () => {
 
     NotesDB.getInstance().add({
       title: `${title}`,
-      content: `${content?.slice()}`,
+      content: `${content}`,
       isActive: false
     })
   }
 
-  const deleteNoteHandler = (e: React.MouseEvent, id: number) => {
+  const deleteNoteHandler = (id: number) => {
     Modal.confirm({
       title: 'Вы хотите удалить выбранную заметку?',
       icon: <ExclamationCircleOutlined />,
@@ -61,6 +64,7 @@ const App: React.FC = () => {
       },
       onCancel() {}
     })
+    setDisabled(true)
   }
 
   const addClass = async (e: React.MouseEvent, id: number) => {
@@ -73,22 +77,39 @@ const App: React.FC = () => {
     const currentNote = await NotesDB.getInstance().get(id)
 
     setContent(currentNote.content)
+    setDisabled(false)
+  }
+
+  const changeHandler = (value: string) => {
+    notes.forEach(note => {
+      if (note.isActive) {
+        NotesDB.getInstance().update(note.id, { content: value })
+      }
+    })
+    setContent(value)
   }
 
   return (
     <AddClass.Provider value={addClass}>
       <NotesContext.Provider value={notes}>
-        <Layout className="App">
-          <Header
-            deleteNoteHandler={deleteNoteHandler}
-            addNoteHandler={addNoteHandler}
-            siderHandler={siderHandler}
-          />
-          <div className="wrapper">
-            <Sidebar siderStatus={siderStatus} />
-            <Workspace content={content} siderStatus={siderStatus} />
-          </div>
-        </Layout>
+        <ContentContext.Provider value={content}>
+          <Layout className="App">
+            <Header
+              deleteNoteHandler={deleteNoteHandler}
+              addNoteHandler={addNoteHandler}
+              siderHandler={siderHandler}
+            />
+            <div className="wrapper">
+              <Sidebar siderStatus={siderStatus} />
+              <Workspace
+                disabled={disabled}
+                changeHandler={changeHandler}
+                content={content}
+                siderStatus={siderStatus}
+              />
+            </div>
+          </Layout>
+        </ContentContext.Provider>
       </NotesContext.Provider>
     </AddClass.Provider>
   )

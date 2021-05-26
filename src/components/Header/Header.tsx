@@ -9,7 +9,7 @@ import { NotesContext } from '../../NotesContext'
 interface HeaderProps {
   siderHandler: MouseEventHandler
   addNoteHandler: MouseEventHandler
-  deleteNoteHandler: (event: React.MouseEvent, removeId: number) => void
+  deleteNoteHandler: (removeId: number) => void
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({
         icon={<LayoutOutlined />}
       />
       <Button
-        onClick={event => deleteNoteHandler(event, removeId)}
+        onClick={() => deleteNoteHandler(removeId)}
         className="Button"
         type="primary"
         icon={<DeleteOutlined />}

@@ -1,11 +1,18 @@
 import Search from 'antd/lib/input/Search'
-import React from 'react'
+import React, { useContext } from 'react'
+import { ContentContext } from '../../ContentContext'
 import './SearchBox.scss'
 
 const SearchBox: React.FC = () => {
 
+  const content = useContext(ContentContext)
+
   const onSearch = (value: string) => {
-    console.log(value)
+    console.log(content) 
+    console.log(value) 
+    if (content.includes(value)) {
+    alert(`Значение ${value} найдено`)
+    }
   }
 
   return (

@@ -32,7 +32,7 @@ export class NotesDB {
     this.table.delete(key)
   }
 
-  update(key: number, changes: {[k: string]: any}) {
+  update(key: number | undefined, changes: {[k: string]: any}) {
     this.table.update(key, changes)
   }
 }
