@@ -6,44 +6,82 @@ import Header from './components/Header/Header'
 import Sidebar from './components/Sider/Sidebar'
 import Workspace from './components/Workspace/Workspace'
 import { NotesDB } from './db/NotesDB'
-import { NotesContext } from './NotesContext'
+import { AddClass, NotesContext } from './NotesContext'
 import { INote } from './db/INote'
 
 const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
   const [notes, setNotes] = useState<Array<INote>>([])
-  const [order, setOrder] = useState<number>(1)
+  const [content, setContent] = useState<any>('')
 
   useEffect(() => {
-    NotesDB.getInstance().get().then(result => {
-      setNotes(result)
-    })
+    NotesDB.getInstance()
+      .getAll()
+      .then(result => {
+        setNotes(result)
+      })
   })
+
+  useEffect(() => {
+    document.addEventListener('keydown', async e => {
+      if (e.key === 'Escape') {
+        const keys = await NotesDB.getInstance().getKeys()
+        keys.forEach(key => {
+          NotesDB.getInstance().update(+key, { isActive: false })
+          setContent('')
+        })
+      }
+    })
+  }, [])
 
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
   }
 
   const addNoteHandler = () => {
-    NotesDB.getInstance().add({title: `Note ${order}`, content: `some content ${order}`})
-    setOrder(order + 1)
+    const title = prompt('Введите название заметки')
+    const content = prompt('Введите начальный контент')
+
+    NotesDB.getInstance().add({
+      title: `${title}`,
+      content: `${content?.slice()}`,
+      isActive: false
+    })
   }
 
-  const deleteNoteHandler = () => {
-    NotesDB.getInstance().delete()
-    setOrder(1)
+  const deleteNoteHandler = (e: React.MouseEvent, id: number) => {
+    NotesDB.getInstance().delete(id)
+    setContent('')
+  }
+
+  const addClass = async (e: React.MouseEvent, id: number) => {
+    const keys = await NotesDB.getInstance().getKeys()
+    keys.forEach(key => {
+      NotesDB.getInstance().update(+key, { isActive: false })
+    })
+    NotesDB.getInstance().update(id, { isActive: true })
+
+    const currentNote = await NotesDB.getInstance().get(id)
+
+    setContent(currentNote.content)
   }
 
   return (
-    <NotesContext.Provider value={notes}>
-      <Layout className="App">
-        <Header deleteNoteHandler={deleteNoteHandler} addNoteHandler={addNoteHandler} siderHandler={siderHandler} />
-        <div className="wrapper">
-          <Sidebar siderStatus={siderStatus} />
-          <Workspace siderStatus={siderStatus} />
-        </div>
-      </Layout>
-    </NotesContext.Provider>
+    <AddClass.Provider value={addClass}>
+      <NotesContext.Provider value={notes}>
+        <Layout className="App">
+          <Header
+            deleteNoteHandler={deleteNoteHandler}
+            addNoteHandler={addNoteHandler}
+            siderHandler={siderHandler}
+          />
+          <div className="wrapper">
+            <Sidebar siderStatus={siderStatus} />
+            <Workspace content={content} siderStatus={siderStatus} />
+          </div>
+        </Layout>
+      </NotesContext.Provider>
+    </AddClass.Provider>
   )
 }
 

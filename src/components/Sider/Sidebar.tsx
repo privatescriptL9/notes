@@ -8,7 +8,7 @@ interface siderProps {
 }
 
 const Sidebar: React.FC<siderProps> = ({
-  siderStatus
+  siderStatus,
 }) => (
   <Sider width={siderStatus ? '25%' : '0%'} className="Sidebar">
     <List />

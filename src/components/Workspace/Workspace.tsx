@@ -3,13 +3,21 @@ import './Workspace.scss'
 
 interface workspaceProps {
   siderStatus: boolean
+  content: string
 }
 
-const Workspace: React.FC<workspaceProps> = ({
-  siderStatus
-}) => (
-  <div contentEditable style={{width: siderStatus ? '75%' : '100%'}} className="Workspace">
-  </div>
-)
+const Workspace: React.FC<workspaceProps> = ({ siderStatus, content }) => {
+
+  
+
+  return (
+    <textarea
+      value={content}
+      placeholder="Выберите заметку"
+      style={{ width: siderStatus ? '75%' : '100%' }}
+      className="Workspace"
+    />
+  )
+}
 
 export default Workspace
