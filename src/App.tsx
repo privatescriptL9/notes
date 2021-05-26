@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
-import { Layout } from 'antd'
+import { Layout, Modal, Button, Space } from 'antd'
 import 'antd/dist/antd.css'
+import {} from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sider/Sidebar'
 import Workspace from './components/Workspace/Workspace'
@@ -50,8 +52,15 @@ const App: React.FC = () => {
   }
 
   const deleteNoteHandler = (e: React.MouseEvent, id: number) => {
-    NotesDB.getInstance().delete(id)
-    setContent('')
+    Modal.confirm({
+      title: 'Вы хотите удалить выбранную заметку?',
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        NotesDB.getInstance().delete(id)
+        setContent('')
+      },
+      onCancel() {}
+    })
   }
 
   const addClass = async (e: React.MouseEvent, id: number) => {
