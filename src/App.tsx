@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import './App.scss'
 import { Layout, Modal } from 'antd'
 import 'antd/dist/antd.css'
-import {} from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sider/Sidebar'
@@ -24,7 +23,7 @@ const App: React.FC = () => {
       .then(result => {
         setNotes(result)
       })
-  })
+  }, [notes])
 
   useEffect(() => {
     document.addEventListener('keydown', async e => {
@@ -48,7 +47,7 @@ const App: React.FC = () => {
     const content = prompt('Введите начальный контент')
 
     NotesDB.getInstance().add({
-      title: `${title}`,
+      title: `${title && title === '' ? title : 'Новая заметка'}`,
       content: `${content}`,
       isActive: false
     })

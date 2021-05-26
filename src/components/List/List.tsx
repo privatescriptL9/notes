@@ -21,7 +21,7 @@ const ListItem: React.FC = () => {
         >
           <List.Item.Meta
             title={<span>{item.title}</span>}
-            description={item.content}
+            description={`${item.content.substring(0, 26)}${item.content.length > 25 ? '...' : ''}`}
           />
         </List.Item>
       )}
