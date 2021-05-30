@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import './App.scss'
 import { Layout, Modal } from 'antd'
 import 'antd/dist/antd.css'
@@ -16,6 +16,27 @@ const App: React.FC = () => {
   const [notes, setNotes] = useState<Array<INote>>([])
   const [content, setContent] = useState<any>('')
   const [disabled, setDisabled] = useState(true)
+  const inputRef = useRef<any>(null)
+
+  const clearClasses = async (id: number) => {
+    const keys = await NotesDB.getInstance().getKeys()
+    keys.forEach(key => {
+      NotesDB.getInstance().update(+key, { isActive: false })
+    })
+    NotesDB.getInstance().update(id, { isActive: true })
+  }
+
+  const focus = async () => {
+    const keys: any = await NotesDB.getInstance().getKeys()
+    
+    if (keys.length !== 0) {
+      keys.forEach((key: any) => {
+        NotesDB.getInstance().update(+key, { isActive: false })
+      })
+      NotesDB.getInstance().update(keys[keys.length - 1], { isActive: true })
+      console.log('Сейчас выбрана', keys[keys.length - 1])
+    }
+  }
 
   useEffect(() => {
     NotesDB.getInstance()
@@ -23,60 +44,52 @@ const App: React.FC = () => {
       .then(result => {
         setNotes(result)
       })
+    if (notes.length === 0) {
+      setDisabled(true)
+    } else {
+      setDisabled(false)
+      inputRef.current.focus()
+    }
   }, [notes])
-
-  useEffect(() => {
-    document.addEventListener('keydown', async e => {
-      if (e.key === 'Escape') {
-        const keys = await NotesDB.getInstance().getKeys()
-        keys.forEach(key => {
-          NotesDB.getInstance().update(+key, { isActive: false })
-          setContent('')
-          setDisabled(true)
-        })
-      }
-    })
-  }, [])
 
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
   }
 
-  const addNoteHandler = () => {
-    const title = prompt('Введите название заметки')?.trim()
-    const content = prompt('Введите начальный контент')
-
+  const addNoteHandler = async () => {
     NotesDB.getInstance().add({
-      title: `${title ? title : 'Новая заметка'}`,
-      content: `${content}`,
-      isActive: false
+      title: '',
+      content: '',
+      isActive: false,
+      createdTime: new Date().toLocaleTimeString(navigator.language, {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     })
+    focus()
+    setContent('')
   }
 
-  const deleteNoteHandler = (id: number) => {
-    Modal.confirm({
-      title: 'Вы хотите удалить выбранную заметку?',
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        NotesDB.getInstance().delete(id)
-        setContent('')
-      },
-      onCancel() {}
-    })
-    setDisabled(true)
+  const deleteNoteHandler = async (id: number) => {
+    const keys: any = await NotesDB.getInstance().getKeys()
+    if (keys.length !== 0) {
+      Modal.confirm({
+        title: 'Вы хотите удалить выбранную заметку?',
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          NotesDB.getInstance().delete(id)
+          focus()
+          setContent('')
+        },
+        onCancel() {}
+      })
+    }
   }
 
-  const addClass = async (e: React.MouseEvent, id: number) => {
-    const keys = await NotesDB.getInstance().getKeys()
-    keys.forEach(key => {
-      NotesDB.getInstance().update(+key, { isActive: false })
-    })
-    NotesDB.getInstance().update(id, { isActive: true })
-
+  const addClassHandler = async (e: React.MouseEvent, id: number) => {
+    clearClasses(id)
     const currentNote = await NotesDB.getInstance().get(id)
-
     setContent(currentNote.content)
-    setDisabled(false)
   }
 
   const changeHandler = (value: string) => {
@@ -89,7 +102,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <AddClass.Provider value={addClass}>
+    <AddClass.Provider value={addClassHandler}>
       <NotesContext.Provider value={notes}>
         <ContentContext.Provider value={content}>
           <Layout className="App">
@@ -101,9 +114,9 @@ const App: React.FC = () => {
             <div className="wrapper">
               <Sidebar siderStatus={siderStatus} />
               <Workspace
+                inputRef={inputRef}
                 disabled={disabled}
                 changeHandler={changeHandler}
-                content={content}
                 siderStatus={siderStatus}
               />
             </div>

@@ -20,8 +20,8 @@ export class NotesDB {
   }
 
   async get(key: number) {
-    const currentNote = await this.table.get(key)
-    return currentNote
+    const note = await this.table.get(key)
+    return note
   }
 
   add(note: INote) {
@@ -34,5 +34,9 @@ export class NotesDB {
 
   update(key: number | undefined, changes: {[k: string]: any}) {
     this.table.update(key, changes)
+  }
+
+  reverse() {
+    this.table.reverse()
   }
 }

@@ -5,10 +5,19 @@
   padding: 20px;
   position: relative;
   font-size: 20px;
-  word-break: break-all;
   border: none;
+  resize: none;
+
+  &::first-line {
+    font-weight: bold;
+    font-size: 23px;
+  }
 
   &:disabled {
     cursor: not-allowed;
+  }
+
+  &:focus {
+    outline: 1px solid #1890FF;
   }
 }

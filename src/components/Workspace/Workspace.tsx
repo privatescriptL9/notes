@@ -1,21 +1,28 @@
-import React from 'react'
+import React, { MutableRefObject, useContext } from 'react'
+import { ContentContext } from '../../ContentContext'
 import './Workspace.scss'
 
 interface workspaceProps {
   siderStatus: boolean
-  content: string
-  changeHandler: (value: string) => void,
+  changeHandler: (value: string) => void
   disabled: boolean
+  inputRef: MutableRefObject<null>
 }
 
-const Workspace: React.FC<workspaceProps> = ({ siderStatus, content, changeHandler, disabled }) => {
+const Workspace: React.FC<workspaceProps> = ({
+  siderStatus,
+  changeHandler,
+  disabled,
+  inputRef
+}) => {
+  const content = useContext(ContentContext)
 
   return (
     <textarea
+      ref={inputRef}
       disabled={disabled}
       onChange={event => changeHandler(event.target.value)}
       value={content}
-      placeholder="Выберите заметку"
       style={{ width: siderStatus ? '75%' : '100%' }}
       className="Workspace"
     />
