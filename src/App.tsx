@@ -16,6 +16,10 @@ const App: React.FC = () => {
   const [content, setContent] = useState<any>('')
   const [disabled, setDisabled] = useState(true)
   const inputRef = useRef<any>(null)
+  const currentTime = new Date().toLocaleTimeString(navigator.language, {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 
   const clearClasses = async (id: number) => {
     const keys = await NotesDB.getInstance().getKeys()
@@ -33,24 +37,24 @@ const App: React.FC = () => {
         NotesDB.getInstance().update(+key, { isActive: false })
       })
       NotesDB.getInstance().update(keys[keys.length - 1], { isActive: true })
-      console.log('Сейчас выбрана', keys[keys.length - 1])
     }
   }
 
   useEffect(() => {
     async function fetchNotes() {
       const result = await NotesDB.getInstance().getAll()
-
-      if (result.length === 0) {
-        setDisabled(true)
-      } else {
-        setDisabled(false)
-        inputRef.current.focus()
-      }
       setNotes(result)
     }
     fetchNotes()
   }, [notes])
+
+  useEffect(() => {
+    if (notes.length !== 0) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
+    }
+  }, [notes.length])
 
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
@@ -61,13 +65,11 @@ const App: React.FC = () => {
       title: '',
       content: '',
       isActive: false,
-      createdTime: new Date().toLocaleTimeString(navigator.language, {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
+      editableTime: currentTime
     })
     focus()
     setContent('')
+    inputRef.current.focus()
   }
 
   const deleteNoteHandler = async (id: number) => {
@@ -77,6 +79,7 @@ const App: React.FC = () => {
       focus()
       if (keys.length !== 1) {
         const lastNote = await NotesDB.getInstance().getLast()
+        inputRef.current.focus()
         setContent(lastNote.content)
       } else {
         setContent('')
@@ -94,6 +97,7 @@ const App: React.FC = () => {
     notes.forEach(note => {
       if (note.isActive) {
         NotesDB.getInstance().update(note.id, { content: value })
+        NotesDB.getInstance().update(note.id, { editableTime: currentTime})
       }
     })
     setContent(value)

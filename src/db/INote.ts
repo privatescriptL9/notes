@@ -3,5 +3,5 @@ export interface INote {
   title: string,
   content: string,
   isActive: boolean,
-  createdTime?: string
+  editableTime?: string
 }

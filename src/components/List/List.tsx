@@ -25,7 +25,7 @@ const ListItem: React.FC = () => {
                   : 'Новая заметка'}
               </span>
             }
-            description={`${item.createdTime} ${
+            description={`${item.editableTime} ${
               item.content.substring(11, 47)
                 ? item.content.substring(11, 47)
                 : 'Нет дополнительного текста'
