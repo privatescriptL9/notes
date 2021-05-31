@@ -5,14 +5,12 @@ import './Workspace.scss'
 interface workspaceProps {
   siderStatus: boolean
   changeHandler: (value: string) => void
-  disabled: boolean
   inputRef: MutableRefObject<null>
 }
 
 const Workspace: React.FC<workspaceProps> = ({
   siderStatus,
   changeHandler,
-  disabled,
   inputRef
 }) => {
   const content = useContext(ContentContext)
@@ -20,7 +18,6 @@ const Workspace: React.FC<workspaceProps> = ({
   return (
     <textarea
       ref={inputRef}
-      disabled={disabled}
       onChange={event => changeHandler(event.target.value)}
       value={content}
       style={{ width: siderStatus ? '75%' : '100%' }}

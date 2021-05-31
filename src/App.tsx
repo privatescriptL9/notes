@@ -14,7 +14,6 @@ const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
   const [notes, setNotes] = useState<Array<INote>>([])
   const [content, setContent] = useState<any>('')
-  const [disabled, setDisabled] = useState(true)
   const inputRef = useRef<any>(null)
   const currentTime = new Date().toLocaleTimeString(navigator.language, {
     hour: '2-digit',
@@ -47,14 +46,6 @@ const App: React.FC = () => {
     }
     fetchNotes()
   }, [notes])
-
-  useEffect(() => {
-    if (notes.length !== 0) {
-      setDisabled(false)
-    } else {
-      setDisabled(true)
-    }
-  }, [notes.length])
 
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
@@ -117,7 +108,6 @@ const App: React.FC = () => {
               <Sidebar siderStatus={siderStatus} />
               <Workspace
                 inputRef={inputRef}
-                disabled={disabled}
                 changeHandler={changeHandler}
                 siderStatus={siderStatus}
               />
