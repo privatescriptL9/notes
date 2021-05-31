@@ -9,11 +9,13 @@ import { NotesDB } from './db/NotesDB'
 import { AddClass, NotesContext } from './NotesContext'
 import { INote } from './db/INote'
 import { ContentContext } from './ContentContext'
+import { DisableContext, FilterHandlerContext } from './SearchBoxContext'
 
 const App: React.FC = () => {
   const [siderStatus, setSiderStatus] = useState<boolean>(true)
   const [notes, setNotes] = useState<Array<INote>>([])
   const [content, setContent] = useState<any>('')
+  const [disabled, setDisabled] = useState<boolean>(true)
   const inputRef = useRef<any>(null)
   const currentTime = new Date().toLocaleTimeString(navigator.language, {
     hour: '2-digit',
@@ -25,20 +27,13 @@ const App: React.FC = () => {
       const result = await NotesDB.getInstance().getAll()
       setNotes(result)
     }
+    if (notes.length !== 0) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
+    }
     fetchNotes()
   }, [notes])
-
-  const addNote = () => {
-    NotesDB.getInstance().add({
-      title: '',
-      content: '',
-      isActive: false,
-      editableTime: currentTime
-    })
-    focus()
-    setContent('')
-    inputRef.current.focus()
-  }
 
   const clearClasses = async (id: number) => {
     const keys = await NotesDB.getInstance().getKeys()
@@ -59,11 +54,24 @@ const App: React.FC = () => {
     }
   }
 
+  const addNote = () => {
+    NotesDB.getInstance().add({
+      title: '',
+      content: '',
+      isActive: false,
+      editableTime: currentTime,
+      filtered: true
+    })
+    focus()
+    setContent('')
+    inputRef.current.focus()
+  }
+
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
   }
 
-  const addNoteHandler = async () => {
+  const addNoteHandler = () => {
     addNote()
   }
 
@@ -98,32 +106,46 @@ const App: React.FC = () => {
     notes.forEach(note => {
       if (note.isActive) {
         NotesDB.getInstance().update(note.id, { content: value })
-        NotesDB.getInstance().update(note.id, { editableTime: currentTime})
+        NotesDB.getInstance().update(note.id, { editableTime: currentTime })
       }
     })
     setContent(value)
+  }
+
+  const filterHandler = (value: string) => {
+    notes.forEach(note => {
+      if (!note.content.includes(value)) {
+        NotesDB.getInstance().update(note.id, { filtered: false })
+      } else {
+        NotesDB.getInstance().update(note.id, { filtered: true })
+      }
+    })
   }
 
   return (
     <AddClass.Provider value={addClassHandler}>
       <NotesContext.Provider value={notes}>
         <ContentContext.Provider value={content}>
-          <Layout className="App">
-            <Header
-              deleteNoteHandler={deleteNoteHandler}
-              addNoteHandler={addNoteHandler}
-              siderHandler={siderHandler}
-            />
-            <div className="wrapper">
-              <Sidebar siderStatus={siderStatus} />
-              <Workspace
-                addOneNote={addOneNote}
-                inputRef={inputRef}
-                changeHandler={changeHandler}
-                siderStatus={siderStatus}
-              />
-            </div>
-          </Layout>
+          <DisableContext.Provider value={disabled}>
+            <FilterHandlerContext.Provider value={filterHandler}>
+              <Layout className="App">
+                <Header
+                  deleteNoteHandler={deleteNoteHandler}
+                  addNoteHandler={addNoteHandler}
+                  siderHandler={siderHandler}
+                />
+                <div className="wrapper">
+                  <Sidebar siderStatus={siderStatus} />
+                  <Workspace
+                    addOneNote={addOneNote}
+                    inputRef={inputRef}
+                    changeHandler={changeHandler}
+                    siderStatus={siderStatus}
+                  />
+                </div>
+              </Layout>
+            </FilterHandlerContext.Provider>
+          </DisableContext.Provider>
         </ContentContext.Provider>
       </NotesContext.Provider>
     </AddClass.Provider>

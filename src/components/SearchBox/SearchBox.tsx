@@ -1,22 +1,18 @@
 import Search from 'antd/lib/input/Search'
 import React, { useContext } from 'react'
-import { ContentContext } from '../../ContentContext'
+import { DisableContext, FilterHandlerContext } from '../../SearchBoxContext'
 import './SearchBox.scss'
 
 const SearchBox: React.FC = () => {
-
-  const content = useContext(ContentContext)
+  const disabled = useContext(DisableContext)
+  const filterHandler = useContext(FilterHandlerContext)
 
   const onSearch = (value: string) => {
-    console.log(content) 
-    console.log(value) 
-    if (content.includes(value)) {
-    alert(`Значение ${value} найдено`)
-    }
+    filterHandler(value)
   }
 
   return (
-    <Search className="SearchBox" placeholder="Поиск" onSearch={onSearch} enterButton />
+    <Search disabled={disabled} className="SearchBox" placeholder="Поиск" onSearch={onSearch} enterButton />
   )
 }
 

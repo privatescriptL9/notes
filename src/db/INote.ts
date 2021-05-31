@@ -3,5 +3,6 @@ export interface INote {
   title: string,
   content: string,
   isActive: boolean,
-  editableTime?: string
+  editableTime: string,
+  filtered: boolean
 }

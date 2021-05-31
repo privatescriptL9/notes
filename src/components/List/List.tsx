@@ -4,7 +4,7 @@ import { List } from 'antd'
 import { AddClass, NotesContext } from '../../NotesContext'
 
 const ListItem: React.FC = () => {
-  const notes = useContext(NotesContext).slice(0).reverse()
+  const notes = useContext(NotesContext).slice(0).reverse().filter(note => note.filtered)
   const AddClassHandler = useContext(AddClass)
 
   return (
