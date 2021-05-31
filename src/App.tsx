@@ -38,17 +38,18 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
-    NotesDB.getInstance()
-      .getAll()
-      .then(result => {
-        setNotes(result)
-      })
-    if (notes.length === 0) {
-      setDisabled(true)
-    } else {
-      setDisabled(false)
-      inputRef.current.focus()
+    async function fetchNotes() {
+      const result = await NotesDB.getInstance().getAll()
+
+      if (result.length === 0) {
+        setDisabled(true)
+      } else {
+        setDisabled(false)
+        inputRef.current.focus()
+      }
+      setNotes(result)
     }
+    fetchNotes()
   }, [notes])
 
   const siderHandler = () => {
