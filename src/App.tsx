@@ -20,6 +20,14 @@ const App: React.FC = () => {
     minute: '2-digit'
   })
 
+  useEffect(() => {
+    async function fetchNotes() {
+      const result = await NotesDB.getInstance().getAll()
+      setNotes(result)
+    }
+    fetchNotes()
+  }, [notes])
+
   const addNote = () => {
     NotesDB.getInstance().add({
       title: '',
@@ -51,20 +59,18 @@ const App: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    async function fetchNotes() {
-      const result = await NotesDB.getInstance().getAll()
-      setNotes(result)
-    }
-    fetchNotes()
-  }, [notes])
-
   const siderHandler = () => {
     setSiderStatus(!siderStatus)
   }
 
   const addNoteHandler = async () => {
     addNote()
+  }
+
+  const addOneNote = () => {
+    if (notes.length === 0) {
+      addNote()
+    }
   }
 
   const deleteNoteHandler = async (id: number) => {
@@ -96,12 +102,6 @@ const App: React.FC = () => {
       }
     })
     setContent(value)
-  }
-
-  const addOneNote = () => {
-    if (notes.length === 0) {
-      addNote()
-    }
   }
 
   return (
