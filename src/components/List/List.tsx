@@ -19,17 +19,23 @@ const ListItem: React.FC = () => {
         >
           <List.Item.Meta
             title={
-              <span>
+              <span className="list-item-title">
                 {item.content.substring(0, 11)
                   ? item.content.substring(0, 11)
                   : 'Новая заметка'}
               </span>
             }
-            description={`${item.editableTime} ${
-              item.content.substring(11, 47)
-                ? item.content.substring(11, 47)
-                : 'Нет дополнительного текста'
-            } ${item.content ? (item.content.length > 46 ? '...' : '') : ''}`}
+            description={
+              <span>
+                <span className="list-item-time">{item.editableTime} </span>
+                <span className="list-item-description">
+                  {item.content.substring(11, 47)
+                    ? item.content.substring(11, 47)
+                    : 'Нет дополнительного текста'}{' '}
+                  {item.content ? (item.content.length > 46 ? '...' : '') : ''}
+                </span>
+              </span>
+            }
           />
         </List.Item>
       )}

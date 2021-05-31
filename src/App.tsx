@@ -20,6 +20,18 @@ const App: React.FC = () => {
     minute: '2-digit'
   })
 
+  const addNote = () => {
+    NotesDB.getInstance().add({
+      title: '',
+      content: '',
+      isActive: false,
+      editableTime: currentTime
+    })
+    focus()
+    setContent('')
+    inputRef.current.focus()
+  }
+
   const clearClasses = async (id: number) => {
     const keys = await NotesDB.getInstance().getKeys()
     keys.forEach(key => {
@@ -52,15 +64,7 @@ const App: React.FC = () => {
   }
 
   const addNoteHandler = async () => {
-    NotesDB.getInstance().add({
-      title: '',
-      content: '',
-      isActive: false,
-      editableTime: currentTime
-    })
-    focus()
-    setContent('')
-    inputRef.current.focus()
+    addNote()
   }
 
   const deleteNoteHandler = async (id: number) => {
@@ -94,6 +98,12 @@ const App: React.FC = () => {
     setContent(value)
   }
 
+  const addOneNote = () => {
+    if (notes.length === 0) {
+      addNote()
+    }
+  }
+
   return (
     <AddClass.Provider value={addClassHandler}>
       <NotesContext.Provider value={notes}>
@@ -107,6 +117,7 @@ const App: React.FC = () => {
             <div className="wrapper">
               <Sidebar siderStatus={siderStatus} />
               <Workspace
+                addOneNote={addOneNote}
                 inputRef={inputRef}
                 changeHandler={changeHandler}
                 siderStatus={siderStatus}

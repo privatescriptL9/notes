@@ -13,12 +13,13 @@
       transition: background-color 0.3s;
     }
 
-    span {
+    .list-item-title {
       font-size: 25px;
     }
 
-    .ant-list-item-meta-description {
-      font-weight: bold;
+    .list-item-time {
+      color: black;
+      font-size: 15px;
     }
 
   }
