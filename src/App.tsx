@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './App.scss'
-import { Layout, Modal } from 'antd'
+import { Layout } from 'antd'
 import 'antd/dist/antd.css'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
 import Header from './components/Header/Header'
 import Sidebar from './components/Sider/Sidebar'
 import Workspace from './components/Workspace/Workspace'
@@ -28,7 +27,7 @@ const App: React.FC = () => {
 
   const focus = async () => {
     const keys: any = await NotesDB.getInstance().getKeys()
-    
+
     if (keys.length !== 0) {
       keys.forEach((key: any) => {
         NotesDB.getInstance().update(+key, { isActive: false })
@@ -73,16 +72,14 @@ const App: React.FC = () => {
   const deleteNoteHandler = async (id: number) => {
     const keys: any = await NotesDB.getInstance().getKeys()
     if (keys.length !== 0) {
-      Modal.confirm({
-        title: 'Вы хотите удалить выбранную заметку?',
-        icon: <ExclamationCircleOutlined />,
-        onOk() {
-          NotesDB.getInstance().delete(id)
-          focus()
-          setContent('')
-        },
-        onCancel() {}
-      })
+      NotesDB.getInstance().delete(id)
+      focus()
+      if (keys.length !== 1) {
+        const lastNote = await NotesDB.getInstance().getLast()
+        setContent(lastNote.content)
+      } else {
+        setContent('')
+      }
     }
   }
 

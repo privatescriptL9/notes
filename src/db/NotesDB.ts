@@ -2,7 +2,6 @@ import { db } from './db'
 import { INote } from './INote'
 
 export class NotesDB {
-
   static db: NotesDB = null!
   private table = db.table('notes')
 
@@ -24,6 +23,11 @@ export class NotesDB {
     return note
   }
 
+  async getLast() {
+    const last = await this.table.limit(1).last()
+    return last
+  }
+
   add(note: INote) {
     this.table.add(note)
   }
@@ -32,7 +36,7 @@ export class NotesDB {
     this.table.delete(key)
   }
 
-  update(key: number | undefined, changes: {[k: string]: any}) {
+  update(key: number | undefined, changes: { [k: string]: any }) {
     this.table.update(key, changes)
   }
 
